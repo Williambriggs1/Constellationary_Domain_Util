@@ -1,6 +1,7 @@
 package com.will;
 
 import com.moandjiezana.toml.Toml;
+import org.bukkit.block.Biome;
 
 import java.io.*;
 import java.util.HashMap;
@@ -30,7 +31,9 @@ public class DropsConfiguration {
                      OutputStream os = new FileOutputStream(dropsFile)) {
                     byte[] buffer = new byte[1024];
                     int length;
-                    while ((length = is.read(buffer)) > 0) {
+                    while (true) {
+                        assert is != null;
+                        if (!((length = is.read(buffer)) > 0)) break;
                         os.write(buffer, 0, length);
                     }
                 } catch (IOException e) {
@@ -46,17 +49,20 @@ public class DropsConfiguration {
         Toml toml = new Toml().read(dropsFile);
         Map<String, DropConfig> newDrops = new HashMap<>();
         List<HashMap<String, Object>> dropConfigs = toml.getList("drops");
-        for (HashMap<String, Object> drop : dropConfigs) {
-            String key = drop.get("block").toString() + ":" + drop.get("biome").toString();
+        for (        HashMap<String, Object> drop : dropConfigs) {
+            String block = drop.get("block").toString();
+            Biome biome = Biome.valueOf(drop.get("biome").toString());
+            String key = block + ":" + biome;
             String item = drop.get("item").toString();
             double probability = (double) drop.get("probability");
-            DropConfig config = new DropConfig(drop.get("block").toString(), drop.get("biome").toString(), item, probability);
+            DropConfig config = new DropConfig(block, biome, item, probability);
             newDrops.put(key, config);
         }
         drops = newDrops;
     }
 
-    public DropConfig getDropConfig(String key) {
+    public DropConfig getDropConfig(org.bukkit.Material block, Biome biome) {
+        String key = block + ":" + biome;
         return drops.get(key);
     }
 }

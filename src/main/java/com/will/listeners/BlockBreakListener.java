@@ -9,28 +9,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Random;
-
 public class BlockBreakListener implements Listener {
     private final Main plugin;
-    private final Random random;
 
     public BlockBreakListener(Main plugin) {
         this.plugin = plugin;
-        this.random = new Random();
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         // Check if the block broken matches any of the configured drops
-        String key = event.getBlock().getType() + ":" + event.getBlock().getBiome();
-        DropConfig drop = plugin.getDropsConfiguration().getDropConfig(key);
+        DropConfig drop = plugin.getDropsConfiguration().getDropConfig(event.getBlock().getType(), event.getBlock().getBiome());
 
         if (drop != null) {
-            double probability = drop.probability();
-
-            if (random.nextDouble() < probability) {
-                // Optimize by fetching MMOItem only when required
+            if (drop.shouldDrop()) {
                 MMOItem mmoItem = MMOItems.plugin.getMMOItem(MMOItems.plugin.getTypes().get("INGREDIENTS"), drop.item());
                 if (mmoItem == null) {
                     plugin.getLogger().warning("Failed to find MMOItem: " + drop.item());

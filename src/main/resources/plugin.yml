@@ -1,0 +1,13 @@
+name: CD_Util
+version: 1.0.0
+main: com.will.Main
+api-version: 1.19
+author: William
+depend:
+  - MMOItems
+description: A custom plugin to configure block breaking drops
+
+commands:
+  mypluginreload:
+    description: Reloads the drops configuration
+    usage: /mypluginreload

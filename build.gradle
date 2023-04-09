@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group 'com.will'
+version '1.0'
+
+shadowJar {
+    archiveBaseName.set('C_Util')
+    archiveClassifier.set('')
+    archiveVersion.set('1.0')
+    exclude("META-INF/**")
+    relocate('com.moandjiezana.toml', 'com.will.toml4j')
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'papermc-repo'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    maven {
+        name = 'phoenix'
+        url = 'https://nexus.phoenixdevt.fr/repository/maven-public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven { url = "https://mvn.lumine.io/repository/maven-public/" }
+    maven{ url = "https://repo.codemc.org/repository/maven-public/" }
+    maven {
+        name = 'toml4j'
+        url = 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    compileOnly('io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT')
+    compileOnly("io.lumine:MythicLib-dist:1.5.1-SNAPSHOT")
+    compileOnly("de.tr7zw:item-nbt-api:2.9.2")
+    implementation('com.moandjiezana.toml:toml4j:0.7.2')
+    implementation('org.slf4j:slf4j-api:2.0.5')
+    compileOnly("net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT")
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

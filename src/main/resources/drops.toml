@@ -1,0 +1,16 @@
+# Configuration for the MyPlugin plugin
+# Custom drops configuration
+
+[[drops]]
+# Drops for breaking tall grass in plains biome
+block = "TALL_GRASS"
+biome = "PLAINS"
+item = "CHIVES"
+probability = 0.5
+
+[[drops]]
+# Drops for breaking tall grass in desert biome
+block = "TALL_GRASS"
+biome = "DESERT"
+item = "PEPPER_SEEDS"
+probability = 0.3
